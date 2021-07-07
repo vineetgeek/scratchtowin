@@ -24,12 +24,12 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    itemArray = List<String>.generate(25, (index) => "empty");
+    itemArray = List<String>.generate(35, (index) => "empty");
     generateRandomNumber();
   }
 
   generateRandomNumber() {
-    int random = Random().nextInt(25);
+    int random = Random().nextInt(35);
     setState(() {
       luckyNumber = random;
     });
@@ -37,20 +37,120 @@ class _HomePageState extends State<HomePage> {
 
   //define getimage method
 
+  AssetImage getImage(int index) {
+    String currentImage = itemArray[index];
+    switch (currentImage) {
+      case "lucky":
+        return lucky;
+        break;
+      case "unlucky":
+        return unlucky;
+        break;
+      default:
+    }
+    return circle;
+  }
+
   //play game method
 
+  playGame(int index) {
+    if (luckyNumber == index) {
+      setState(() {
+        itemArray[index] = "lucky";
+      });
+    } else {
+      setState(() {
+        itemArray[index] = "unlucky";
+      });
+    }
+  }
+
   //show all
+
+  showAll() {
+    setState(() {
+      itemArray = List<String>.filled(35, "unlucky");
+      itemArray[luckyNumber] = "lucky";
+    });
+  }
 
   //reset all
   resetGame() {
     setState(() {
-      itemArray = List<String>.filled(25, "empty");
+      itemArray = List<String>.filled(35, "empty");
     });
     generateRandomNumber();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Scratch and Win"),
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Expanded(
+            child: GridView.builder(
+              padding: EdgeInsets.all(20.0),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 5,
+                  childAspectRatio: 1.0,
+                  crossAxisSpacing: 10.0,
+                  mainAxisSpacing: 10.0),
+              itemCount: itemArray.length,
+              itemBuilder: (context, i) => SizedBox(
+                width: 50.0,
+                height: 50.0,
+                child: RaisedButton(
+                  onPressed: () {
+                    this.playGame(i);
+                  },
+                  child: Image(
+                    image: this.getImage(i),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.all(15.0),
+            child: RaisedButton(
+              onPressed: () {
+                this.showAll();
+              },
+              color: Colors.red,
+              padding: EdgeInsets.all(20.0),
+              child: Text(
+                "Show All",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 15,
+                ),
+              ),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.all(15.0),
+            child: RaisedButton(
+              onPressed: () {
+                this.resetGame();
+              },
+              color: Colors.red,
+              padding: EdgeInsets.all(20.0),
+              child: Text(
+                "ResetGame All",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 15,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
